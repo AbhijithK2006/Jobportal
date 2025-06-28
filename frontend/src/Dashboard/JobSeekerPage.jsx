@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Person, Work, VerifiedUser, Bookmark, BookmarkBorder } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
-function UserDash({ jobs: initialJobs = [], setJobs }) {
+function UserDash({ jobs: initialJobs = [], setJobs, userEmail }) {
   const [jobs, setLocalJobs] = useState(initialJobs);
   const [appliedJobIds, setAppliedJobIds] = useState([]);
   const [savedJobIds, setSavedJobIds] = useState([]);
@@ -13,13 +13,24 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
   const [filters, setFilters] = useState({ type: '', location: '', industry: '' });
   const [loading, setLoading] = useState(true);
 
-  // Load profile from localStorage
+  // Load profile from database
   useEffect(() => {
-    const savedProfile = localStorage.getItem('userProfile');
-    if (savedProfile) {
-      setProfile(JSON.parse(savedProfile));
-    }
-  }, []);
+    const fetchProfile = async () => {
+      if (userEmail) {
+        setProfile(prev => ({ ...prev, email: userEmail }));
+        try {
+          const response = await fetch(`http://localhost:3000/profile/${userEmail}`);
+          if (response.ok) {
+            const userData = await response.json();
+            setProfile(userData);
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error);
+        }
+      }
+    };
+    fetchProfile();
+  }, [userEmail]);
 
   // Fetch jobs if not passed as props
   useEffect(() => {
@@ -28,7 +39,6 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
         const res = await fetch('http://localhost:3000/jobs');
         if (res.ok) {
           let data = await res.json();
-          // Ensure each job has an 'id' field for matching
           data = data.map(job => ({
             ...job,
             id: job.id || job._id?.toString()
@@ -65,7 +75,6 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
           setAppliedJobIds([]);
         }
       } catch (err) {
-        console.error('Error fetching applied jobs:', err);
         setAppliedJobIds([]);
       }
     };
@@ -76,12 +85,25 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleProfileSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
     if (profile.name && profile.email) {
-      localStorage.setItem('userProfile', JSON.stringify(profile));
-      alert('✅ Profile updated!');
-      setView('dashboard');
+      try {
+        const response = await fetch('http://localhost:3000/update-profile', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile)
+        });
+        if (response.ok) {
+          alert('✅ Profile updated!');
+          setProfile({ ...profile });
+          setView('dashboard');
+        } else {
+          alert('⚠️ Failed to update profile.');
+        }
+      } catch (error) {
+        alert('❌ Error updating profile.');
+      }
     } else {
       alert('⚠️ Please complete all required fields.');
     }
@@ -134,7 +156,6 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
   // Remove application handler for applied jobs tab
   const handleRemoveApplication = async (jobId) => {
     try {
-      // Fetch all applications for this user
       const response = await fetch(`http://localhost:3000/applications/${profile.email}`);
       if (response.ok) {
         const apps = await response.json();
@@ -143,7 +164,6 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
           alert('Application not found.');
           return;
         }
-        // Delete the application by its _id
         const delRes = await fetch(`http://localhost:3000/applications/${appToDelete._id}`, {
           method: 'DELETE'
         });
@@ -167,54 +187,6 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
 
   const appliedJobs = jobs.filter(job => appliedJobIds.includes(job.id?.toString()));
   const uniqueValues = (key) => [...new Set(jobs.map(job => job[key]))];
-
-  if (!profile.email) {
-    return (
-      <div className="flex min-h-screen bg-[#f1faee] items-center justify-center">
-        <section className="max-w-2xl bg-white p-6 rounded shadow">
-          <h2 className="text-2xl font-bold text-[#511D43] mb-4">📝 Please Complete Your Profile</h2>
-          <form onSubmit={handleProfileSubmit} className="space-y-4">
-            <div>
-              <label className="block font-semibold mb-1">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                value={profile.name}
-                onChange={handleProfileChange}
-                className="w-full border border-gray-300 p-2 rounded"
-                placeholder="e.g. John"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={profile.email}
-                onChange={handleProfileChange}
-                className="w-full border border-gray-300 p-2 rounded"
-                placeholder="e.g. abc@example.com"
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Bio</label>
-              <textarea
-                name="bio"
-                value={profile.bio}
-                onChange={handleProfileChange}
-                className="w-full border border-gray-300 p-2 rounded"
-                rows="4"
-                placeholder="Brief bio about you"
-              />
-            </div>
-            <button type="submit" className="bg-[#511D43] text-white px-4 py-2 rounded hover:bg-pink-700">
-              Save Profile
-            </button>
-          </form>
-        </section>
-      </div>
-    );
-  }
 
   if (loading) {
     return <div className="text-center mt-20 text-lg">🔄 Loading dashboard...</div>;
@@ -394,6 +366,7 @@ function UserDash({ jobs: initialJobs = [], setJobs }) {
                   onChange={handleProfileChange}
                   className="w-full border border-gray-300 p-2 rounded"
                   placeholder="e.g. abc@example.com"
+                  readOnly
                 />
               </div>
               <div>

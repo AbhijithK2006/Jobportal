@@ -259,7 +259,7 @@ function AdminPage({ jobs, setJobs }) {
                 </div>
                 <div className="flex gap-2">
                   <Button variant="contained" color="success" startIcon={<CheckCircleIcon />} onClick={() => updateApplicationStatus(app._id, 'accepted')}>Accept</Button>
-                  <Button variant="contained" color="error" startIcon={<CancelIcon />} onClick={() => updateApplicationStatus(app._id, 'declined')}>Decline</Button>
+                  <Button variant="contained" color="error" startIcon={<CancelIcon />} onClick={() => removeAcceptedApplication(app._id)}>Decline</Button>
                 </div>
               </div>
             ))}

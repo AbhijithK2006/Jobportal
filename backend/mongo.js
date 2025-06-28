@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: { type: String, enum: ['jobseeker', 'admin'] },
   location: String,
-  skills: [String]
+  skills: [String],
+  bio: String
 });
 
 const applicationSchema = new mongoose.Schema({

@@ -9,7 +9,7 @@ import AdminPage from './Admin/AdminPage';
 import JobDetails from './Admin/JobDetails';
 
 // AppContent handles routing and conditional Nav rendering
-function AppContent({ jobs, setJobs, setRole }) {
+function AppContent({ jobs, setJobs, setRole, userEmail, setUserEmail }) {
   const location = useLocation();
 
   // Hide Nav on these routes
@@ -21,9 +21,9 @@ function AppContent({ jobs, setJobs, setRole }) {
       <Routes>
         <Route path="/" element={<Home jobs={jobs} />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Loginpage setRole={setRole} />} />
+        <Route path="/login" element={<Loginpage setRole={setRole} setUserEmail={setUserEmail} />} />
         <Route path="/admin" element={<AdminPage jobs={jobs} setJobs={setJobs} />} />
-        <Route path="/jobseeker" element={<JobSeekerPage jobs={jobs} setJobs={setJobs} />} />
+        <Route path="/jobseeker" element={<JobSeekerPage jobs={jobs} setJobs={setJobs} userEmail={userEmail} />} />
         <Route path="/job/:id" element={<JobDetails jobs={jobs} />} />
       </Routes>
     </>
@@ -232,10 +232,11 @@ function App() {
   ]);
 
   const [role, setRole] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
 
   return (
     <BrowserRouter>
-      <AppContent jobs={jobs} setJobs={setJobs} setRole={setRole} />
+      <AppContent jobs={jobs} setJobs={setJobs} setRole={setRole} userEmail={userEmail} setUserEmail={setUserEmail} />
     </BrowserRouter>
   );
 }
