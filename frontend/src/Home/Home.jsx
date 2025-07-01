@@ -7,6 +7,10 @@ function Home({ jobs }) {
   const navigate = useNavigate();
 
   return (
+    <>
+    <head>
+      <title>Job Portal</title>
+    </head>
     <div className="bg-[#f1faee] min-h-screen p-6 flex flex-col items-center">
 
       <div className="text-center max-w-4xl py-15">
@@ -64,6 +68,7 @@ function Home({ jobs }) {
         ))}
       </div>
     </div>
+    </>
   );
 }
 

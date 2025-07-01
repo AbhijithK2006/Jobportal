@@ -60,6 +60,10 @@ function Signup() {
   };
 
   return (
+    <>
+    <head>
+      <title>Sign Up</title>
+    </head>
     <div className='bg-[#f1faee] min-h-screen flex items-center justify-center py-30'>
       <div className='max-w-md w-full bg-white px-10 py-10 rounded-2xl shadow-lg'>
         <h2 className="text-center text-4xl font-bold text-[#511D43]">Sign Up</h2>
@@ -146,6 +150,7 @@ function Signup() {
         </form>
       </div>
     </div>
+    </>
   );
 }
 

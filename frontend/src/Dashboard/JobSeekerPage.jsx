@@ -193,6 +193,10 @@ function UserDash({ jobs: initialJobs = [], setJobs, userEmail }) {
   }
 
   return (
+    <>
+    <head>
+      <title>User Dashboard</title>
+    </head>
     <div className="flex min-h-screen bg-[#f1faee]">
       {/* Navbar */}
       <nav className="bg-white text-black p-4 flex justify-between rounded-b-4xl shadow-lg fixed w-full top-0 left-0 z-30">
@@ -388,6 +392,7 @@ function UserDash({ jobs: initialJobs = [], setJobs, userEmail }) {
         )}
       </main>
     </div>
+    </>
   );
 }
 

@@ -118,6 +118,10 @@ function AdminPage({ jobs, setJobs }) {
   };
 
   return (
+    <>
+    <head>
+      <title>Admin Dashboard</title>
+    </head>
     <div className="flex min-h-screen">
       {/* Navbar */}
       <nav className="bg-white text-black p-4 flex justify-between rounded-b-4xl shadow-lg fixed w-full top-0 left-0 z-30">
@@ -287,6 +291,7 @@ function AdminPage({ jobs, setJobs }) {
         )}
       </main>
     </div>
+    </>
   );
 }
 

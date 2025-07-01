@@ -72,6 +72,10 @@ function Loginpage({ setRole, setUserEmail }) {
   };
 
   return (
+    <>
+    <head>
+      <title>Login</title>
+    </head>
     <div className="bg-[#f1faee] min-h-screen flex items-center justify-center py-10">
       <div className="max-w-md w-full bg-white px-10 py-10 rounded-2xl shadow-lg">
         <h2 className="text-center text-4xl font-bold text-[#511D43]">Log In</h2>
@@ -114,6 +118,7 @@ function Loginpage({ setRole, setUserEmail }) {
         </form>
       </div>
     </div>
+    </>
   );
 }
 
