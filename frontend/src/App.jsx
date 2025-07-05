@@ -30,6 +30,7 @@ function AppContent({ jobs, setJobs, setRole, userEmail, setUserEmail }) {
   );
 }
 
+
 // Top-level App that wraps everything with BrowserRouter
 function App() {
   const [jobs, setJobs] = useState([
